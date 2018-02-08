@@ -1,6 +1,7 @@
 package com.coolweather.android;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -128,6 +129,13 @@ public class ChooseAreaFragment extends Fragment {
                     mSelectCity = mCityList.get(position);
                     //获取对应的县级数据
                     queryCounty();
+                } else if (currentLevel == county_type) {
+                    //如果等于县级的话,说明是点击了市级的某个县,应该显示该县的天气信息
+                    String weatherId = mCountyList.get(position).getWeatherId();
+                    Intent intent = new Intent(getActivity(), WeatherActivity.class);
+                    intent.putExtra("weather_id", weatherId);
+                    startActivity(intent);
+                    getActivity().finish();
                 }
             }
         });
