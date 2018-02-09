@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.GravityCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -130,12 +131,21 @@ public class ChooseAreaFragment extends Fragment {
                     //获取对应的县级数据
                     queryCounty();
                 } else if (currentLevel == county_type) {
-                    //如果等于县级的话,说明是点击了市级的某个县,应该显示该县的天气信息
                     String weatherId = mCountyList.get(position).getWeatherId();
-                    Intent intent = new Intent(getActivity(), WeatherActivity.class);
-                    intent.putExtra("weather_id", weatherId);
-                    startActivity(intent);
-                    getActivity().finish();
+                    //如果是从MainActivity中启动的就跳转
+                    if (getActivity() instanceof MainActivity) {
+                        //如果等于县级的话,说明是点击了市级的某个县,应该显示该县的天气信息
+                        Intent intent = new Intent(getActivity(), WeatherActivity.class);
+                        intent.putExtra("weather_id", weatherId);
+                        startActivity(intent);
+                        getActivity().finish();
+                    } else if (getActivity() instanceof WeatherActivity) {
+                        //如果是从抽屉窗口中选中的就更新数据,并关闭抽屉窗口
+                        WeatherActivity weatherActivity = (WeatherActivity) getActivity();
+                        weatherActivity.mDrawerLayout.closeDrawer(GravityCompat.START);
+                        weatherActivity.mSwipeRefreshLayout.setRefreshing(true);
+                        weatherActivity.requestWeather(weatherId);
+                    }
                 }
             }
         });
