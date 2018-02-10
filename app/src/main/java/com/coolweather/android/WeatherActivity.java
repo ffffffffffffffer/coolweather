@@ -1,5 +1,6 @@
 package com.coolweather.android;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
@@ -21,6 +22,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.coolweather.android.gson.Forecast;
 import com.coolweather.android.gson.Weather;
+import com.coolweather.android.service.AutoUpdateService;
 import com.coolweather.android.utils.HttpUtils;
 import com.coolweather.android.utils.Utility;
 
@@ -104,6 +106,7 @@ public class WeatherActivity extends AppCompatActivity {
             //显示weather数据到各个控件中
             showWeatherInfo(weather);
         } else {
+
             //没有数据就去获取数据
             weatherID = getIntent().getStringExtra("weather_id");
             mWeatherLayout.setVisibility(View.INVISIBLE);
@@ -122,7 +125,7 @@ public class WeatherActivity extends AppCompatActivity {
 
     }
 
-    private void loadBingPic() {
+    public void loadBingPic() {
         String requestBingPic = "http://guolin.tech/api/bing_pic";
         HttpUtils.sendOkHttpRequest(requestBingPic, new Callback() {
             @Override
@@ -154,7 +157,7 @@ public class WeatherActivity extends AppCompatActivity {
         });
     }
 
-    public void requestWeather(final String weather_id) {
+    private void requestWeather(final String weather_id) {
         //拼接Url
         //http://guolin.tech/api/weather?cityid=CN101281701&key=b96a3792eb9c48d08f5bfc9c42d91cbe
         String weatherUrl = "http://guolin.tech/api/weather?cityid=" + weather_id +
@@ -204,6 +207,9 @@ public class WeatherActivity extends AppCompatActivity {
     }
 
     private void showWeatherInfo(Weather weather) {
+        //开启定时器服务定时更新天气
+        Intent intent = new Intent(this, AutoUpdateService.class);
+        startService(intent);
         //取出weather对象中的数据
         //设置各个控件对应的数据
         String cityName = weather.basic.cityName;
