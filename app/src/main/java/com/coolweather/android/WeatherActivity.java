@@ -157,7 +157,7 @@ public class WeatherActivity extends AppCompatActivity {
         });
     }
 
-    private void requestWeather(final String weather_id) {
+    public void requestWeather(final String weather_id) {
         //拼接Url
         //http://guolin.tech/api/weather?cityid=CN101281701&key=b96a3792eb9c48d08f5bfc9c42d91cbe
         String weatherUrl = "http://guolin.tech/api/weather?cityid=" + weather_id +
